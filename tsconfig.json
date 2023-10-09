@@ -1,0 +1,84 @@
+{
+  "compilerOptions": {
+    "incremental": false,
+    // "module": "es2022",
+    "target": "es2017",
+    "module": "commonjs",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "jsx": "preserve",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "noEmit": false,
+    "importHelpers": true,
+    "resolveJsonModule": true,
+    /* Strict Type-Checking Options */
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "exactOptionalPropertyTypes": false,
+    "noImplicitOverride": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noPropertyAccessFromIndexSignature": true,
+    /* Additional Checks */
+    "noUnusedLocals": false,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    "useUnknownInCatchVariables": true,
+    /* Module Resolution Options */
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "@App/*": [
+        "src/App/*"
+      ],
+      "@Common/*": [
+        "src/Common/*"
+      ],
+      "@Gen/*": [
+        "src/Gen/*"
+      ],
+      "@Lib/*": [
+        "src/Lib/*"
+      ],
+      "@Test/*":[
+        "src/Test/*"
+      ]
+    },
+    // "rootDirs": [],                       
+    // "typeRoots": [],                      
+    // "types": [],                           
+    // "allowSyntheticDefaultImports": true, 
+    "esModuleInterop": true,
+    // "allowUmdGlobalAccess": true,          
+    /* Source Map Options */
+    //"sourceRoot": "./src",                     
+    //"mapRoot": "./dist",                      
+    //"inlineSourceMap": false,              
+    //"inlineSources": false,                
+    /* Experimental Options */
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "isolatedModules": true
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  //"exclude": [
+  //  "node_modules"
+  //]
+}
