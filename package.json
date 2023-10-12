@@ -1,18 +1,19 @@
 {
-  "name": "xdo-ts",
-  "version": "1.0.0",
+  "name": "catamorphism",
+  "version": "1.0.2",
   "description": "",
-  "_moduleAliases": {
-    "@App": "./dist/App"
-  },
   "scripts": {
-    "build": "npx tsc",
-    "start": "node ./dist/App/index.js"
+    "option": "ts-node ./src/App/Option.ts",
+    "taskoption": "ts-node ./src/App/TaskOption.ts",
+    "validation": "ts-node ./src/App/Validation.ts"
   },
-  "author": "",
+  "author": "Loïs Mansot",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.1.5",
+    "@typescript-eslint/eslint-plugin": "^6.7.5",
+    "@typescript-eslint/parser": "^6.7.5",
+    "eslint": "^8.51.0",
     "fp-ts": "^2.15.0",
     "tslib": "^2.5.0",
     "typescript": "^5.0.4"

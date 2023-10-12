@@ -1,23 +1,27 @@
-import * as F from "fp-ts/function"
 import * as M from "fp-ts/Monoid"
 import * as O from "fp-ts/Option"
 import * as S from "fp-ts/Semigroup"
 import assert from "assert"
 
-export const getMonoidFirst:
-	<T>() => M.Monoid<O.Option<T>> =
-	<T>() =>
+/**
+ * First Monoid for the Option type
+ */
+export const getMonoidFirst =
+	<T>(): M.Monoid<O.Option<T>> =>
 		O.getMonoid(S.first<T>())
 
+/**
+ * Left-most non-None value of an array of Option
+ */
 export const firstOption:
 	<T>(xs: ReadonlyArray<O.Option<T>>) => O.Option<T> =
-		F.flow(
-			M.concatAll(getMonoidFirst()),
-		)
+		M.concatAll(getMonoidFirst())
 
-export const main:
-	() => void =
-	() => {
+/**
+ * Main function for testing
+ */
+export const main =
+	(): void => {
 		assert.deepStrictEqual(
 			firstOption<number>([O.none, O.some(1), O.some(2)]),
 			O.some(1)
@@ -27,3 +31,6 @@ export const main:
 			O.none
 		)
 	}
+
+
+main()

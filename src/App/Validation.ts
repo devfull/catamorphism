@@ -10,43 +10,52 @@ import * as TE from "fp-ts/TaskEither"
 import * as T from "fp-ts/Task"
 import assert from "assert"
 
-export const zero:
-	<E, A>(m: Monoid.Monoid<E>) => E.Either<E, A> =
-	<E, A>(m: Monoid.Monoid<E>) =>
-		E.left<E, A>(m.empty)
+/**
+ * Get an empty left value from a monoid
+ */
+export const zero =
+	<E, A>(m: Monoid.Monoid<E>): E.Either<E, A> =>
+		E.left(m.empty)
 
-export const zeroM:
-	<E, A, M extends HKT.URIS>(monad: Monad.Monad1<M>) => (monoid: Monoid.Monoid<E>) => HKT.Kind<M, E.Either<E, A>> =
-	<E, A, M extends HKT.URIS>(monad: Monad.Monad1<M>) =>
-			(monoid: Monoid.Monoid<E>) =>
-		monad.of(zero<E, A>(monoid))
-
-export const firstAltValidation:
-	<E, A, M extends HKT.URIS>(monad: Monad.Monad1<M>) => (monoid: Monoid.Monoid<E>) => (fs: Array<HKT.Kind<M, E.Either<E, A>>>) => HKT.Kind<M, E.Either<E, A>> =
-	<E, A, M extends HKT.URIS>(monad: Monad.Monad1<M>) =>
-			(monoid: Monoid.Monoid<E>) =>
+/**
+ * Wrap an empty left value from a monoid in a monad
+ */
+export const zeroM =
+	<E, A, M extends HKT.URIS>(monad: Monad.Monad1<M>):
+			((monoid: Monoid.Monoid<E>) => HKT.Kind<M, E.Either<E, A>>) =>
 		F.flow(
-			Array.reduce(
-				zeroM<E, A, M>(monad)(monoid),
-				(acc, cur: HKT.Kind<M, E.Either<E, A>>) =>
-					ET.altValidation(monad, monoid)(() => cur)(acc)
-			),
+			zero<E, A>,
+			monad.of
 		)
 
-export const firstTaskValidation:
-	<E, A>(monoid: Monoid.Monoid<E>) => (fs: Array<T.Task<E.Either<E, A>>>) => T.Task<E.Either<E, A>> =
-	<E, A>(monoid: Monoid.Monoid<E>) =>
-		firstAltValidation<E, A, T.URI>(T.Monad)(monoid)
+/**
+ * First non-Left result of an EitherT sequence, using left concatentation
+ */
+export const altAllValidation =
+	<E, A, M extends HKT.URIS>(monad: Monad.Monad1<M>) => (monoid: Monoid.Monoid<E>):
+			((fs: Array<HKT.Kind<M, E.Either<E, A>>>) => HKT.Kind<M, E.Either<E, A>>) =>
+		Array.reduce(
+			zeroM<E, A, M>(monad)(monoid),
+			(acc, cur) =>
+				ET.altValidation(monad, monoid)(() => cur)(acc)
+		)
+
+/**
+ * First non-Left result of a TaskEither sequence, using left concatentation
+ */
+export const firstTaskValidation =
+	<E, A>(monoid: Monoid.Monoid<E>):
+			((fs: Array<T.Task<E.Either<E, A>>>) => T.Task<E.Either<E, A>>) =>
+		altAllValidation<E, A, T.URI>(T.Monad)(monoid)
 
 export const main =
-	async () => {
+	async (): Promise<void> => {
 		const log:
-			<A>(a: A) => TE.TaskEither<never, void> =
+			<T>(a: T) => TE.TaskEither<never, void> =
 				F.flow(Console.log, T.fromIO, T.delay(500), TE.fromTask)
 
-		const handler:
-			<E, A>(n: number, a: E.Either<E, A>) => TE.TaskEither<E, A> =
-			<E, A>(n: number, a: E.Either<E, A>) =>
+		const handler =
+			<E, A>(n: number, a: E.Either<E, A>): TE.TaskEither<E, A> =>
 				F.pipe(
 					log(`Handler ${n}: Step 1/2`),
 					TE.chain(() => log(`Handler ${n}: Step 2/2`)),
@@ -63,3 +72,5 @@ export const main =
 			E.left(["e0", "e1"])
 		)
 	}
+
+main()

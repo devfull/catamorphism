@@ -1,38 +1,29 @@
 import * as A from "fp-ts/Alternative"
-import * as Array from "fp-ts/Array"
 import * as Console from "fp-ts/Console"
 import * as F from "fp-ts/function"
-import * as HKT from "fp-ts/HKT"
 import * as O from "fp-ts/Option"
 import * as T from "fp-ts/Task"
 import * as TO from "fp-ts/TaskOption"
 import assert from "assert"
 
-export const firstAlt:
-	<M extends HKT.URIS, A>(a: A.Alternative1<M>) => (fs: Array<HKT.Kind<M, A>>) => HKT.Kind<M, A> =
-	<M extends HKT.URIS, A>(a: A.Alternative1<M>) =>
-		F.flow(
-			Array.reduce(
-				a.zero<A>(),
-				(acc, cur: HKT.Kind<M, A>) =>
-					a.alt<A>(acc, () => cur)
-			),
-		)
-
+/**
+ * First non-None result of a TaskOption sequence
+ */
 export const firstTaskOption:
-	<A>(fs: Array<TO.TaskOption<A>>) => TO.TaskOption<A> =
-	<A>(fs: Array<TO.TaskOption<A>>) =>
-		firstAlt<TO.URI, A>(TO.Alternative)(fs)
+	<T>(fs: Array<TO.TaskOption<T>>) => TO.TaskOption<T> =
+		A.altAll(TO.Alternative)
 
+/**
+ * Main function for testing
+ */
 export const main =
-	async () => {
+	async (): Promise<void> => {
 		const log:
-			<A>(a: A) => TO.TaskOption<void> =
+			<T>(a: T) => TO.TaskOption<void> =
 				F.flow(Console.log, T.fromIO, T.delay(500), TO.fromTask)
 
-		const handler:
-			<A>(n: number, a: O.Option<A>) => TO.TaskOption<A> =
-			<A>(n: number, a: O.Option<A>) =>
+		const handler =
+			<T>(n: number, a: O.Option<T>): TO.TaskOption<T> =>
 				F.pipe(
 					log(`Handler ${n}: Step 1/2`),
 					TO.chain(() => log(`Handler ${n}: Step 2/2`)),
@@ -48,3 +39,5 @@ export const main =
 			O.some(1)
 		)
 	}
+
+main()
